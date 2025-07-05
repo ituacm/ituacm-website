@@ -1,12 +1,13 @@
-import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./CourseDashboard.css";
+import { supabase } from "../../api/supabaseClient";
 
 function CourseDashboard() {
   const { courseId } = useParams();
   const navigate = useNavigate();
   const [course, setCourse] = useState(null);
+  const [lectures, setLectures] = useState([]);
   const courseRef = useRef(null);
   const [isCreateMode, setIsCreateMode] = useState(courseId === "new");
 
@@ -14,11 +15,22 @@ function CourseDashboard() {
     if (!isCreateMode) {
       const fetchCourse = async () => {
         try {
-          const response = await axios.get(
-            `http://localhost:8080/courses/${courseId}`
-          );
-          setCourse(response.data);
-          courseRef.current = { ...response.data };
+          const { data, error } = await supabase
+            .from("courses")
+            .select("*")
+            .eq("id", courseId)
+            .single();
+          if (error) throw error;
+          setCourse(data);
+          courseRef.current = { ...data };
+          // Fetch lectures for this course
+          const { data: lecturesData, error: lecturesError } = await supabase
+            .from("lectures")
+            .select("*")
+            .eq("courseId", courseId)
+            .order("lectureNumber", { ascending: true });
+          if (lecturesError) throw lecturesError;
+          setLectures(lecturesData || []);
         } catch (error) {
           console.error("Error fetching course data:", error);
         }
@@ -32,39 +44,41 @@ function CourseDashboard() {
         description: "",
         content: "",
         image: "",
-        lectures: [],
       };
       setCourse(courseRef.current);
+      setLectures([]);
     }
   }, [courseId, isCreateMode]);
 
   const handleLectureChange = (index, field, value) => {
-    courseRef.current.lectures[index][field] = value;
-    setCourse({ ...courseRef.current });
+    const newLectures = [...lectures];
+    newLectures[index][field] = value;
+    setLectures(newLectures);
   };
 
   const handleDeleteLecture = (index) => {
-    courseRef.current.lectures.splice(index, 1);
-    setCourse({ ...courseRef.current });
+    const newLectures = [...lectures];
+    newLectures.splice(index, 1);
+    setLectures(newLectures);
   };
 
   const handleAddLecture = () => {
     const newLecture = {
-      lectureNumber: courseRef.current.lectures.length + 1,
+      lectureNumber: lectures.length + 1,
       subject: "",
       start: "",
       end: "",
       location: "",
       instructors: "",
     };
-    courseRef.current.lectures.push(newLecture);
-    setCourse({ ...courseRef.current });
+    setLectures([...lectures, newLecture]);
   };
 
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this course?")) {
       try {
-        await axios.delete(`http://localhost:8080/courses/${courseId}`);
+        await supabase.from('courses').delete().eq('id', courseId);
+        await supabase.from('lectures').delete().eq('courseId', courseId);
         alert("Course deleted successfully!");
         navigate("/courses");
       } catch (error) {
@@ -77,50 +91,86 @@ function CourseDashboard() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // General course fields
-    const formData = new FormData();
-    const { _id, __v, image, lectures, newImageFile, ...courseData } =
-      courseRef.current;
+    const { image, newImageFile, ...courseData } = courseRef.current;
+    let imageUrl = image;
+    let oldImageFileName;
 
-    // Print courseRef for debugging
-    console.log("courseRef:", courseRef.current);
+    // Extract old image file name if it is a Supabase Storage URL
+    if (image && image.includes('course-images')) {
+      const parts = image.split('/');
+      const idx = parts.findIndex(p => p === 'course-images');
+      if (idx !== -1 && parts.length > idx + 1) {
+        oldImageFileName = parts.slice(idx + 1).join('/');
+      }
+    }
 
-    Object.keys(courseData).forEach((key) => {
-      formData.append(key, courseData[key]);
-    });
-
+    // Upload new image if selected
     if (newImageFile) {
-      formData.append("photo", courseRef.current.newImageFile);
+      const fileExt = newImageFile.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
+      const { error: uploadError } = await supabase.storage
+        .from('course-images')
+        .upload(fileName, newImageFile, {
+          cacheControl: '3600',
+          upsert: false,
+        });
+      if (uploadError) {
+        console.error('Image upload error:', uploadError);
+        alert('Görsel yüklenemedi.');
+        return;
+      }
+      // Get public URL
+      const { data: publicUrlData } = supabase.storage.from('course-images').getPublicUrl(fileName);
+      imageUrl = publicUrlData.publicUrl;
+      // Delete old image if exists
+      if (oldImageFileName) {
+        await supabase.storage.from('course-images').remove([oldImageFileName]);
+      }
     }
 
-    // Lectures
-    formData.append("lectures", JSON.stringify(lectures));
-
-    // Print form data for debugging
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
-    }
+    // Prepare course payload (no lectures)
+    const coursePayload = {
+      ...courseData,
+      image: imageUrl,
+    };
 
     try {
+      let result;
+      let course_id = courseId;
       if (isCreateMode) {
-        await axios.post("http://localhost:8080/courses", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        alert("Course created successfully!");
+        result = await supabase.from('courses').insert([coursePayload]).select().single();
+        console.log('Supabase insert result:', result);
+        if (result.error) {
+          console.error('Supabase error:', result.error, result);
+          throw result.error;
+        }
+        course_id = result.data.id;
+        alert('Course created successfully!');
       } else {
-        await axios.put(`http://localhost:8080/courses/${courseId}`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        alert("Course updated successfully!");
+        result = await supabase.from('courses').update(coursePayload).eq('id', courseId);
+        console.log('Supabase update result:', result);
+        if (result.error) {
+          console.error('Supabase error:', result.error, result);
+          throw result.error;
+        }
+        // Sil eski lectures
+        await supabase.from('lectures').delete().eq('courseId', courseId);
+        course_id = courseId;
+        alert('Course updated successfully!');
+      }
+      // Insert all lectures with courseId
+      if (lectures.length > 0) {
+        const lecturesWithCourseId = lectures.map((l, idx) => ({ ...l, courseId: course_id, lectureNumber: idx + 1 }));
+        const { error: lecturesError } = await supabase.from('lectures').insert(lecturesWithCourseId);
+        if (lecturesError) {
+          console.error('Lectures insert error:', lecturesError);
+          alert('Lectures could not be saved!');
+        }
       }
       navigate(-1);
     } catch (error) {
-      console.error("Error saving course:", error);
-      alert(`Failed to ${isCreateMode ? "create" : "update"} course.`);
+      console.error('Error saving course:', error, JSON.stringify(error, null, 2));
+      alert(`Failed to ${isCreateMode ? 'create' : 'update'} course.\n${error?.message || JSON.stringify(error)}`);
     }
   };
 
@@ -200,11 +250,10 @@ function CourseDashboard() {
 
             <hr />
             <h3>Lectures</h3>
-            {courseRef.current.lectures.map((lecture, index) => (
+            {lectures.map((lecture, index) => (
               <div key={index} className="course-dashboard-lecture">
                 <div className="course-dashboard-lecture-title">
-                  Lecture {lecture.lectureNumber}:{" "}
-                  {lecture.subject || "Untitled Lecture"}
+                  Lecture {lecture.lectureNumber}: {lecture.subject || "Untitled Lecture"}
                 </div>
                 <div className="course-dashboard-lecture-section">
                   <div className="course-dashboard-lecture-section-title">
@@ -214,9 +263,7 @@ function CourseDashboard() {
                     type="text"
                     placeholder="Enter subject*"
                     value={lecture.subject}
-                    onChange={(e) =>
-                      handleLectureChange(index, "subject", e.target.value)
-                    }
+                    onChange={(e) => handleLectureChange(index, "subject", e.target.value)}
                     required
                   />
                 </div>
@@ -228,9 +275,7 @@ function CourseDashboard() {
                     type="text"
                     placeholder="Enter location*"
                     value={lecture.location}
-                    onChange={(e) =>
-                      handleLectureChange(index, "location", e.target.value)
-                    }
+                    onChange={(e) => handleLectureChange(index, "location", e.target.value)}
                     required
                   />
                 </div>
@@ -242,9 +287,7 @@ function CourseDashboard() {
                     type="text"
                     placeholder="Enter instructors*"
                     value={lecture.instructors}
-                    onChange={(e) =>
-                      handleLectureChange(index, "instructors", e.target.value)
-                    }
+                    onChange={(e) => handleLectureChange(index, "instructors", e.target.value)}
                     required
                   />
                 </div>
@@ -255,9 +298,7 @@ function CourseDashboard() {
                   <input
                     type="datetime-local"
                     value={lecture.start ? lecture.start.slice(0, 16) : ""}
-                    onChange={(e) =>
-                      handleLectureChange(index, "start", e.target.value)
-                    }
+                    onChange={(e) => handleLectureChange(index, "start", e.target.value)}
                     required
                   />
                 </div>
@@ -268,9 +309,7 @@ function CourseDashboard() {
                   <input
                     type="datetime-local"
                     value={lecture.end ? lecture.end.slice(0, 16) : ""}
-                    onChange={(e) =>
-                      handleLectureChange(index, "end", e.target.value)
-                    }
+                    onChange={(e) => handleLectureChange(index, "end", e.target.value)}
                     required
                   />
                 </div>

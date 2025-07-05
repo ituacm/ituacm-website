@@ -35,7 +35,7 @@ function CourseCard({ course }) {
 
   const navigate = useNavigate();
   function createSearchQuery() {
-    navigate(`/courses?id=${course._id}`);
+    navigate(`/courses?id=${course.id}`);
   }
 
   function weekDiffFromToday(date) {
@@ -52,7 +52,7 @@ function CourseCard({ course }) {
     <div className="course-card-container">
       <div className="course-card-left">
         <img
-          src={`http://localhost:8080/media/${course.image}`}
+          src={course.image}
           className="course-card-image"
         />
         <div className="course-card-time-label">
@@ -95,7 +95,7 @@ function CourseCard({ course }) {
         <div className="course-card-content">
           <div className="course-card-content-top">
             <h1 className="course-card-title">{course.title}</h1>
-            <p className="course-card-description">{course.content}</p>
+            <p className="course-card-description">{course.description}</p>
             <div className="course-card-labels">
               {(() => {
                 if (course.lectures.length == 1) {
@@ -115,7 +115,7 @@ function CourseCard({ course }) {
                   " lessons, " +
                   Math.ceil(
                     (course.end.getTime() - course.start.getTime()) /
-                      (1000 * 60 * 60 * 24 * 7)
+                    (1000 * 60 * 60 * 24 * 7)
                   ) +
                   " weeks"}
               </p>

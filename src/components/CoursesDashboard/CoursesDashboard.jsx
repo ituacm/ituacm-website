@@ -21,9 +21,9 @@ function CoursesDashboard() {
               <li
                 className="courses-dashboard-element"
                 onClick={() => {
-                  navigate(course._id);
+                  navigate(course.id);
                 }}
-                key={course._id}
+                key={course.id}
               >
                 {course.title}
               </li>

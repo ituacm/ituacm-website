@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 function EventCard({ event, page }) {
   const navigate = useNavigate();
   function createSearchQuery() {
-    navigate(`/${page}?id=${event.courseId ? event.courseId : event._id}`);
+    navigate(`/${page}?id=${event.courseId ? event.courseId : event.id}`);
   }
   function weekDiffFromToday(date) {
     const today = new Date();
@@ -63,7 +63,7 @@ function EventCard({ event, page }) {
           })()}
         </div>
         <img
-          src={`http://localhost:8080/media/${event.image}`}
+          src={event.image}
           className="eventcard-image"
         />
         <div className="eventcard-detail">

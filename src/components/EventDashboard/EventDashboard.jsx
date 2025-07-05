@@ -1,7 +1,7 @@
-import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./EventDashboard.css";
+import { supabase } from "../../api/supabaseClient"
 
 function EventDashboard() {
   const { eventId } = useParams();
@@ -14,11 +14,14 @@ function EventDashboard() {
     if (!isCreateMode) {
       const fetchEvent = async () => {
         try {
-          const response = await axios.get(
-            `http://localhost:8080/events/${eventId}`
-          );
-          setEvent(response.data);
-          eventRef.current = response.data;
+          const { data, error } = await supabase
+            .from("events")
+            .select("*")
+            .eq("id", eventId)
+            .single();
+          if (error) throw error;
+          setEvent(data);
+          eventRef.current = data;
         } catch (error) {
           console.error("Error fetching event data:", error);
         }
@@ -35,6 +38,7 @@ function EventDashboard() {
         start: new Date().toISOString().slice(0, 16),
         end: new Date().toISOString().slice(0, 16),
         registrationLink: "",
+        content: "",
       };
       setEvent(eventRef.current);
     }
@@ -43,7 +47,7 @@ function EventDashboard() {
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this event?")) {
       try {
-        await axios.delete(`http://localhost:8080/events/${eventId}`);
+        await supabase.from('events').delete().eq('id', eventId);
         alert("Event deleted successfully!");
         navigate(-1);
       } catch (error) {
@@ -56,37 +60,62 @@ function EventDashboard() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    const { _id, __v, image, newImageFile, ...eventData } = eventRef.current;
-
-    Object.keys(eventData).forEach((key) => {
-      formData.append(key, eventData[key]);
-    });
-
-    if (newImageFile) {
-      formData.append("photo", eventRef.current.newImageFile);
+    const { image, newImageFile, ...eventData } = eventRef.current;
+    let imageUrl = image;
+    let oldImageFileName;
+    // Eğer eski image bir URL ise ve Supabase bucket'ından ise, dosya adını çıkar
+    if (image && image.includes('event-images')) {
+      // Örnek: https://.../storage/v1/object/public/event-images/filename.jpg
+      const parts = image.split('/');
+      const idx = parts.findIndex(p => p === 'event-images');
+      if (idx !== -1 && parts.length > idx + 1) {
+        oldImageFileName = parts.slice(idx + 1).join('/');
+      }
     }
 
+    if (newImageFile) {
+      const fileExt = newImageFile.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('event-images')
+        .upload(fileName, newImageFile, {
+          cacheControl: '3600',
+          upsert: false,
+        });
+      if (uploadError) {
+        console.error('Image upload error:', uploadError);
+        alert('Görsel yüklenemedi.');
+        return;
+      }
+      // Public URL oluştur
+      const { data: publicUrlData } = supabase.storage.from('event-images').getPublicUrl(fileName);
+      imageUrl = publicUrlData.publicUrl;
+      // Eski görseli sil
+      if (oldImageFileName) {
+        await supabase.storage.from('event-images').remove([oldImageFileName]);
+      }
+    }
+
+    const eventPayload = {
+      ...eventData,
+      image: imageUrl,
+    };
+
     try {
+      let result;
       if (isCreateMode) {
-        await axios.post("http://localhost:8080/events", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        alert("Event created successfully!");
+        result = await supabase.from('events').insert([eventPayload]);
+        if (result.error) throw result.error;
+        alert('Event created successfully!');
       } else {
-        await axios.put(`http://localhost:8080/events/${eventId}`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        alert("Event updated successfully!");
+        result = await supabase.from('events').update(eventPayload).eq('id', eventId);
+        if (result.error) throw result.error;
+        alert('Event updated successfully!');
       }
       navigate(-1);
     } catch (error) {
-      console.error("Error saving event:", error);
-      alert(`Failed to ${isCreateMode ? "create" : "update"} event.`);
+      console.error('Error saving event:', error);
+      alert(`Failed to ${isCreateMode ? 'create' : 'update'} event.`);
     }
   };
 
@@ -143,6 +172,18 @@ function EventDashboard() {
                 />
               </label>
             )}
+            <label className="event-dashboard-form-label">
+              Content*:
+              <textarea
+                className="event-dashboard-form-textarea"
+                defaultValue={eventRef.current.content}
+                onChange={(e) =>
+                  (eventRef.current.content = e.target.value)
+                }
+                required
+              />
+            </label>
+            <br />
             <label className="event-dashboard-form-label">
               {isCreateMode ? "Upload Image*:" : "Upload New Image:"}
               <input

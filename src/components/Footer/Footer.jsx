@@ -80,7 +80,7 @@ function Footer() {
         </div>
       </div>
       <div className="footer-bottom">
-        <p>© 2024 ITU ACM Student Chapter, All Rights Reserved.</p>
+        <p>© 2025 ITU ACM Student Chapter, All Rights Reserved.</p>
       </div>
     </div>
   );

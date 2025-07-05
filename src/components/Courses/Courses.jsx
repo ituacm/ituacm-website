@@ -27,7 +27,7 @@ function Courses({
 
   const [searchParams] = useSearchParams();
   const modalCourse = courses.find(
-    (course) => course._id === searchParams.get("id")
+    (course) => course.id === searchParams.get("id")
   );
 
   useEffect(() => {
@@ -46,19 +46,19 @@ function Courses({
         <div className="courses-list">
           {!visible
             ? listingCourses.map((course, index) => {
-                return (
-                  <div key={index} className="course">
-                    <CourseCard course={course} page={"courses"} />
-                  </div>
-                );
-              })
+              return (
+                <div key={index} className="course">
+                  <CourseCard course={course} page={"courses"} />
+                </div>
+              );
+            })
             : listingCourses.slice(0, visibleCourses).map((course, index) => {
-                return (
-                  <div key={index} className="course">
-                    <CourseCard course={course} page={"courses"} />
-                  </div>
-                );
-              })}
+              return (
+                <div key={index} className="course">
+                  <CourseCard course={course} page={"courses"} />
+                </div>
+              );
+            })}
         </div>
         {visible && listingCourses.length > visible ? (
           <button

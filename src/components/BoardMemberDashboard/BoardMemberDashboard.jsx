@@ -1,7 +1,7 @@
-import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./BoardMemberDashboard.css";
+import { supabase } from "../../api/supabaseClient";
 
 function BoardMemberDashboard() {
   const { boardMemberId } = useParams();
@@ -14,11 +14,14 @@ function BoardMemberDashboard() {
     if (!isCreateMode) {
       const fetchMember = async () => {
         try {
-          const response = await axios.get(
-            `http://localhost:8080/boardMembers/${boardMemberId}`
-          );
-          setMember(response.data);
-          memberRef.current = { ...response.data };
+          const { data, error } = await supabase
+            .from("board_members")
+            .select("*")
+            .eq("id", boardMemberId)
+            .single();
+          if (error) throw error;
+          setMember(data);
+          memberRef.current = { ...data };
         } catch (error) {
           console.error("Error fetching member data:", error);
         }
@@ -33,7 +36,7 @@ function BoardMemberDashboard() {
         github: "",
         linkedin: "",
         email: "",
-        grade: 1,
+        grade: 0,
         photo: "",
       };
       setMember(memberRef.current);
@@ -43,9 +46,7 @@ function BoardMemberDashboard() {
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this board member?")) {
       try {
-        await axios.delete(
-          `http://localhost:8080/boardMembers/${boardMemberId}`
-        );
+        await supabase.from('board_members').delete().eq('id', boardMemberId);
         alert("Board member deleted successfully!");
         navigate(-1);
       } catch (error) {
@@ -58,42 +59,72 @@ function BoardMemberDashboard() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // General member fields
-    const formData = new FormData();
-    const { _id, __v, image, newImageFile, ...memberData } = memberRef.current;
+    const { photo, newImageFile, ...memberData } = memberRef.current;
+    let photoUrl = photo;
+    let oldPhotoFileName;
 
-    Object.keys(memberData).forEach((key) => {
-      formData.append(key, memberData[key]);
-    });
-
-    if (newImageFile) {
-      formData.append("photo", newImageFile);
+    // Extract old photo file name if it is a Supabase Storage URL
+    if (photo && photo.includes('boardmember-images')) {
+      const parts = photo.split('/');
+      const idx = parts.findIndex(p => p === 'boardmember-images');
+      if (idx !== -1 && parts.length > idx + 1) {
+        oldPhotoFileName = parts.slice(idx + 1).join('/');
+      }
     }
 
-    try {
-      if (isCreateMode) {
-        await axios.post("http://localhost:8080/boardMembers", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+    // Upload new image if selected
+    if (newImageFile) {
+      const fileExt = newImageFile.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
+      const { error: uploadError } = await supabase.storage
+        .from('boardmember-images')
+        .upload(fileName, newImageFile, {
+          cacheControl: '3600',
+          upsert: false,
         });
-        alert("Board member created successfully!");
+      if (uploadError) {
+        console.error('Image upload error:', uploadError);
+        alert('Görsel yüklenemedi.');
+        return;
+      }
+      // Get public URL
+      const { data: publicUrlData } = supabase.storage.from('boardmember-images').getPublicUrl(fileName);
+      photoUrl = publicUrlData.publicUrl;
+      // Delete old photo if exists
+      if (oldPhotoFileName) {
+        await supabase.storage.from('boardmember-images').remove([oldPhotoFileName]);
+      }
+    }
+
+    // Prepare member payload
+    const memberPayload = {
+      ...memberData,
+      photo: photoUrl,
+    };
+
+    try {
+      let result;
+      if (isCreateMode) {
+        result = await supabase.from('board_members').insert([memberPayload]);
+        console.log('Supabase insert result:', result);
+        if (result.error) {
+          console.error('Supabase error:', result.error, result);
+          throw result.error;
+        }
+        alert('Board member created successfully!');
       } else {
-        await axios.put(
-          `http://localhost:8080/boardMembers/${boardMemberId}`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-        alert("Board member updated successfully!");
+        result = await supabase.from('board_members').update(memberPayload).eq('id', boardMemberId);
+        console.log('Supabase update result:', result);
+        if (result.error) {
+          console.error('Supabase error:', result.error, result);
+          throw result.error;
+        }
+        alert('Board member updated successfully!');
       }
       navigate(-1);
     } catch (error) {
-      console.error("Error saving board member:", error);
-      alert(`Failed to ${isCreateMode ? "create" : "update"} board member.`);
+      console.error('Error saving board member:', error, JSON.stringify(error, null, 2));
+      alert(`Failed to ${isCreateMode ? 'create' : 'update'} board member.\n${error?.message || JSON.stringify(error)}`);
     }
   };
 
@@ -182,9 +213,7 @@ function BoardMemberDashboard() {
                 <div className="board-member-dashboard-image-preview">
                   <img
                     src={
-                      memberRef.current.photo?.startsWith("http")
-                        ? memberRef.current.photo
-                        : `http://localhost:8080/media/${memberRef.current.photo}`
+                      memberRef.current.photo
                     }
                     alt="Board Member"
                     className="board-member-dashboard-image"

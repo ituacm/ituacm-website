@@ -1,45 +1,42 @@
-import axios from "axios";
-import { getCourses } from "../api/courses";
+import { supabase } from "../api/supabaseClient";
 
 export const coursesLoader = async () => {
-  const response = await fetch("/courses.json");
-  if (!response.ok) {
-    throw new Response("Failed to fetch events", { status: 500 });
+  // Fetch all courses
+  const { data: courses, error: coursesError } = await supabase
+    .from("courses")
+    .select("*");
+  if (coursesError) {
+    throw new Response("Failed to fetch courses", { status: 500 });
   }
-  const data = await response.json();
-  const formattedData = data.map((course) => ({
-    ...course,
-    lectures: course.lectures.map((lecture) => ({
-      ...lecture,
-      start: new Date(lecture.start),
-      end: new Date(lecture.end),
-    })),
-    start: new Date(course.lectures[0].start),
-    end: new Date(course.lectures[course.lectures.length - 1].end),
-  }));
+
+  // Fetch all lectures
+  const { data: lectures, error: lecturesError } = await supabase
+    .from("lectures")
+    .select("*");
+  if (lecturesError) {
+    throw new Response("Failed to fetch lectures", { status: 500 });
+  }
+
+  // Attach lectures to their courses
+  const formattedData = courses.map((course) => {
+    const courseLectures = lectures
+      .filter((lecture) => lecture.courseId === course.id)
+      .sort((a, b) => a.lectureNumber - b.lectureNumber)
+      .map((lecture) => ({
+        ...lecture,
+        start: new Date(lecture.start),
+        end: new Date(lecture.end),
+      }));
+    return {
+      ...course,
+      lectures: courseLectures,
+      start:
+        courseLectures.length > 0 ? new Date(courseLectures[0].start) : null,
+      end:
+        courseLectures.length > 0
+          ? new Date(courseLectures[courseLectures.length - 1].end)
+          : null,
+    };
+  });
   return formattedData;
-  // try {
-  //   const data = await getCourses();
-  //   console.log("Courses: " + data[0]._id);
-  //   const formattedData = data.map((course) => ({
-  //     ...course,
-  //     lectures: course.lectures.map((lecture) => ({
-  //       ...lecture,
-  //       start: new Date(lecture.start),
-  //       end: new Date(lecture.end),
-  //     })),
-  //     start:
-  //       course.lectures.length > 0
-  //         ? new Date(course.lectures[0].start)
-  //         : new Date(),
-  //     end:
-  //       course.lectures.length > 0
-  //         ? new Date(course.lectures[course.lectures.length - 1].end)
-  //         : new Date(),
-  //   }));
-  //   return formattedData;
-  // } catch (error) {
-  //   console.log("Error getting courses: " + error);
-  //   return [];
-  // }
 };

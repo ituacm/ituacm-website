@@ -1,10 +1,12 @@
+import { supabase } from "../api/supabaseClient";
+
 export const boardMembersLoader = async () => {
   try {
-    const response = await fetch("http://localhost:8080/boardMembers");
-    if (!response.ok) {
+    const { data, error } = await supabase.from("board_members").select("*");
+    if (error) {
       throw new Response("Failed to fetch board members", { status: 500 });
     }
-    return response.json();
+    return data;
   } catch (error) {
     console.error("Error loading board members:", error);
     return [];

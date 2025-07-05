@@ -21,9 +21,9 @@ function EventsDashboard() {
               <li
                 className="events-dashboard-element"
                 onClick={() => {
-                  navigate(event._id);
+                  navigate(event.id);
                 }}
-                key={event._id}
+                key={event.id}
               >
                 {event.title}
               </li>

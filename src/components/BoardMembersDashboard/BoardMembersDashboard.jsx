@@ -3,9 +3,7 @@ import { Link, useLoaderData } from "react-router-dom";
 import "./BoardMembersDashboard.css";
 
 function BoardMembersDashboard() {
-  const boardMembers = useLoaderData() || [];
-
-  console.log(boardMembers);
+  const boardMembers = useLoaderData();
 
   return (
     <div className="board-members-dashboard-container">
@@ -18,8 +16,8 @@ function BoardMembersDashboard() {
         </Link>
         {boardMembers.map((member) => (
           <Link
-            key={member._id}
-            to={member._id}
+            key={member.id}
+            to={member.id}
             className="board-members-dashboard-element"
           >
             <div className="board-members-dashboard-title">

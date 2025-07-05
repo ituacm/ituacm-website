@@ -102,6 +102,22 @@
   background-color: #0056b3;
 }
 
+.board-member-dashboard-image-preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.board-member-dashboard-image {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
 @media (max-width: 768px) {
   .board-member-dashboard-form-wrapper {
     width: 90%;
