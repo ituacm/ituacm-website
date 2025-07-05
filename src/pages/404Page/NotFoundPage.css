@@ -1,0 +1,34 @@
+.not-found-page-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 90vh;
+}
+.not-found-404-header{
+    font-size: 15rem;
+}
+.not-found-text{
+    width:80vw;
+    font-size: 2rem;
+    margin:0 0 1rem 0;
+}
+@media(width<1000px){
+    .not-found-404-header{
+        font-size: 10rem;
+    }
+    .not-found-text{
+        font-size: 1.5rem;
+    }
+}
+@media(width<550px){
+    .not-found-404-header{
+        font-size: 6rem;
+    }
+    .not-found-text{
+        font-size: 1rem;
+    }
+    .not-found-return-button{
+        font-size: 0.8rem;
+    }
+}

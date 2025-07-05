@@ -1,0 +1,112 @@
+.event-modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+  
+.event-modal-overlay { 
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+  
+.event-modal-content {
+  position: absolute;
+  background-color: #f3f3f3;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  z-index: 20;
+  width: 70%;
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+}
+.event-modal-content-left{
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+.event-modal-photo{
+    width: 100%;
+    height: 20rem;
+    object-fit: cover;
+    border-radius: 0.5rem;
+}
+.event-modal-content-right{
+    text-align: left;
+    width: 69%;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: space-between;
+    min-height: 20rem;
+}
+.event-modal-content-right-top{
+
+}
+.event-modal-content-right-bottom{
+  padding-bottom: 1rem;
+}
+.event-modal-details{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    padding-bottom: 1.5rem;
+}
+.event-modal-description{
+  font-weight: 500;
+}
+.event-modal-text{
+  font-weight: 400;
+}
+.event-modal-detail-section{
+    margin-top: 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content:left ;
+    gap:0.3rem
+}
+.event-modal-time-label{
+  position: absolute;
+  top: 1.5rem;
+  left:1.5rem;
+}
+.event-modal-detail-section p{
+  font-weight: 500;
+}
+.event-modal-icon{
+    font-size: 1.3rem;
+    width: 1.5rem;
+    align-items: center;
+}
+@media(width<1000px){
+  .event-modal-content{
+    width: 90%;
+  }
+}@media(width<800px){
+  .event-modal-content{
+    flex-direction: column;
+
+  }
+  .event-modal-photo{
+    height: 15rem;
+  }
+  .event-modal-content-left{
+    width: 100%;
+  }
+  .event-modal-content-right{
+    width: 100%;
+  }
+}

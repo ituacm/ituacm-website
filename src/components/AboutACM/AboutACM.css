@@ -1,0 +1,256 @@
+.about-page{
+  padding-top: 5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-section{
+  display: flex;
+  flex-direction: row;
+  height: 400px;
+}
+
+.top-section-left-part{
+  flex: 1 0 40%;
+
+}
+
+.top-section-right-part{
+  display: flex;
+  flex: 2 0 60%;
+  flex-direction: column;
+  background-color: var(--accent-color);
+  justify-content: center;
+  align-items: center;
+}
+
+
+.top-section-left-part-image{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.top-section-right-part-paragraph{
+  color: white;
+  font-size: 1em;
+  padding: 1em 2em 2em 2em;
+  line-height: 1.3;
+}
+
+.top-section-right-part-header{
+  color: white;
+  font-size: 1.6em;
+  font-weight: bold;
+}
+
+
+
+.mid-section{
+  display: flex;
+  flex-direction: row;
+  height: 400px;
+}
+
+.mid-section-right-part{
+  flex: 1 0 15%;
+  background-color: var(--primary-color);
+}
+
+.mid-section-left-part{
+  display: flex;
+  flex: 1 0 15%;
+  background-color: var(--accent-color);
+  text-align: center;
+  justify-content: center; 
+  align-items: center; 
+}
+
+.mid-section-mid-part{
+  display: flex;
+  flex: 2 0 70%;
+  justify-content: center;
+  align-items: center;
+}
+
+.mid-section-left-part-header{
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-orientation: mixed;
+  font-size: 2em;
+  font-weight: bold;
+  color: white;
+}
+
+.mid-section-mid-part-paragraph{
+  color: black;
+  font-size: 1.15em;
+  padding: 4em;
+  line-height: 1.3;
+}
+
+
+
+.bot-section{
+  display: flex;
+  flex-direction: row;
+  height: 400px;
+}
+
+.bot-section-left-part{
+  display: flex;
+  flex-direction: column;
+  flex: 2 0 60%;
+  background-color: var(--accent-color);
+  text-align: center;
+  justify-content: center; 
+  align-items: center; 
+}
+
+.bot-section-right-part{
+  flex: 1 0 40%;
+}
+
+.bot-section-left-part-content{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.bot-section-right-part-image{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bot-section-left-part-paragraph{
+  color: white;
+  font-size: 1.15em;
+  padding: 0 4em 2em 4em;
+  line-height: 1.3;
+}
+
+.bot-section-left-part .about-page-icons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  text-decoration: none;
+}
+
+.bot-section-left-part .about-page-icons a {
+  font-size: 30px;
+  margin: 0px 20px 0px 20px;
+  cursor: pointer;
+  transition: 0.3s;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+
+@media (max-width:768px){
+  .top-section-right-part-paragraph{
+    padding-bottom: 1em;
+    font-size: 0.8em;
+    padding: 1.5em;
+  }
+  
+  .top-section-right-part-header{
+    font-size: 1.4em;
+  }
+
+  
+  .mid-section-left-part-header{
+    font-size: 1.8em;
+  }
+
+  .mid-section-mid-part-paragraph{
+    font-size: 1em;
+    padding: 2em;
+  }
+
+  .bot-section-left-part-paragraph{
+    font-size: 1em;
+    padding: 2em;
+  }
+
+
+  .bot-section-left-part .about-page-icons a {
+    font-size: 25px;
+    margin: 0px 15px 0px 15px;
+  }
+}
+
+
+@media (max-width:500px){
+  .top-section-right-part-paragraph{
+    padding-bottom: 1em;
+    font-size: 0.7em;
+    padding: 1.5em;
+    line-height: 1.2;
+  }
+  
+  .top-section-right-part-header{
+    font-size: 1.1em;
+  }
+
+  
+  .mid-section-left-part-header{
+    font-size: 1.6em;
+  }
+
+  .mid-section-mid-part-paragraph{
+    font-size: 0.85em;
+    padding: 1.5em;
+    line-height: 1.2;
+  }
+
+  .bot-section-left-part-paragraph{
+    font-size: 0.85em;
+    padding: 1.5em;
+    line-height: 1.2;
+  }
+
+
+  .bot-section-left-part .about-page-icons a {
+    font-size: 20px;
+    margin: 0px 10px 0px 10px;
+  }
+}
+
+@media (max-width:375px){
+  .top-section-right-part-paragraph{
+    padding-bottom: 1em;
+    font-size: 0.65em;
+    padding: 1.2em;
+    line-height: 1.15;
+  }
+  
+  .top-section-right-part-header{
+    font-size: 1em;
+  }
+
+  
+  .mid-section-left-part-header{
+    font-size: 1.5em;
+  }
+
+  .mid-section-mid-part-paragraph{
+    font-size: 0.8em;
+    padding: 1.3em;
+    line-height: 1.15;
+  }
+
+  .bot-section-left-part-paragraph{
+    font-size: 0.8em;
+    padding: 1.3em;
+    line-height: 1.15;
+  }
+
+
+  .bot-section-left-part .about-page-icons a {
+    font-size: 18px;
+    margin: 0px 7px 0px 7px;
+  }
+}

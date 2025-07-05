@@ -1,0 +1,159 @@
+.footer-container{
+    width: 100%;
+}
+.footer {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: auto;
+    background: var(--primary-color);
+
+    padding: 20px;
+    box-sizing: border-box;
+    color: white;
+    justify-content: space-between;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+}
+
+.footer-left {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    border-right: solid 1px white;
+}
+.footer-img{
+    display: flex;
+    align-items: center;
+    height: 9rem;
+}
+.footer-img img {
+    margin: 20px;
+    width: 100px;
+    transition: 0.2s;
+}
+
+.footer-img img:hover {
+    transform: scale(1.05);
+}
+
+#acmWhite {
+    width: 80px;
+}
+
+#ituWhite {
+    width: 110px;
+    margin-bottom: 35px;
+}
+
+
+.footer-right {
+    width: 100%;
+    align-items: center;
+    text-align: center;
+    padding: 15px;
+    flex-direction: column;
+}
+
+.footer-content{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height:9rem;
+}
+
+.footer-icons {
+    height: auto;
+    display: flex;
+    justify-content: center;
+}
+
+
+.footer-icons a i {
+    font-size: 1.7rem;
+    margin: 0px 20px 0px 20px;
+    cursor: pointer;
+    transition: 0.3s;
+    color: white;
+}
+
+.footer-icons i:hover {
+    transform: scale(1.1);
+}
+
+.footer-bottom {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    background: var(--primary-color);
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    width: 100%;
+    color: white;
+    font-size: 13px;
+}
+
+
+.footer-bottom p {
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes scroll-text {
+    from {
+        left: 100%;
+    }
+
+    to {
+        left: -100%;
+    }
+}
+
+@media (max-width: 900px) {
+
+
+    .footer {
+        flex-direction: column;
+        font-size: 10px;
+    }
+
+    .footer-img img {
+        margin: 20px;
+        width: 63px;
+        transition: 0.2s;
+    }
+
+    #acmWhite {
+        width: 50px;
+    }
+
+    #ituWhite {
+        width: 67px;
+    }
+
+    .footer-icons i {
+        font-size: 23px;
+        margin: 10px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .footer-right {
+        padding: 0rem;
+    }
+
+    .footer-bottom {
+        font-size: 8px;
+    }
+}
+@media(max-width:450px){
+    .footer-icons a i {
+        font-size: 1.5rem;
+    }
+}

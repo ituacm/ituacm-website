@@ -1,0 +1,41 @@
+.courses-dashboard-container{
+    margin-top: 5rem;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 2rem;
+  }
+  
+  .courses-dashboard-list{
+    list-style: square;
+    width: 50%;
+    text-align: left;
+  }
+  
+  .courses-dashboard-element {
+    cursor: pointer;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .courses-dashboard-element:hover {
+    background-color: #f1f1f1;
+    transform: scale(1.02);
+  }
+
+  .courses-dashboard-create {
+    background-color: #e8f5e9;
+    border-color: #a5d6a7;
+    color: #2e7d32;
+    font-weight: 500;
+  }
+
+  .courses-dashboard-create:hover {
+    background-color: #c8e6c9;
+    border-color: #81c784;
+  }

@@ -1,0 +1,113 @@
+.board-member-dashboard-container {
+  margin-top: 5rem;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+.board-member-dashboard-form-wrapper {
+  width: 50%;
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.board-member-dashboard-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.board-member-dashboard-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.board-member-dashboard-form-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.board-member-dashboard-form-input {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.board-member-dashboard-form-textarea {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  min-height: 100px;
+  resize: vertical;
+}
+
+.board-member-dashboard-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  width: 50%;
+  margin-bottom: 2rem;
+}
+
+.board-member-dashboard-back-button,
+.board-member-dashboard-delete-button,
+.board-member-dashboard-form-submit-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+  width: 100%;
+}
+
+.board-member-dashboard-back-button {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.board-member-dashboard-back-button:hover {
+  background-color: #e0e0e0;
+}
+
+.board-member-dashboard-delete-button {
+  background-color: #dc3545;
+  color: white;
+}
+
+.board-member-dashboard-delete-button:hover {
+  background-color: #c82333;
+}
+
+.board-member-dashboard-form-submit-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.board-member-dashboard-form-submit-button:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 768px) {
+  .board-member-dashboard-form-wrapper {
+    width: 90%;
+  }
+  
+  .board-member-dashboard-buttons {
+    width: 90%;
+  }
+} 

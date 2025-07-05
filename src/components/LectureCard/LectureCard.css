@@ -1,0 +1,51 @@
+.lecture-card-container{
+    background-color: #f3f3f3;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    width: 20rem;
+    height: 9rem;
+    padding: 1rem;
+}
+.lecture{
+    width: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.lecture-number{
+    font-size: 1rem;
+    font-weight: 600;
+}
+.lecture-subject{
+    font-size: 1.5rem;
+}
+.select-lecture-button{
+    font-size: 1.3rem;
+    cursor: pointer;
+}
+.inactive-button{
+    cursor:default;
+    opacity:0.5;
+}
+.lecture-detail-section{
+    margin-top: 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content:left ;
+    gap:0.3rem
+}
+.lecture-icon{
+    font-size: 1.3rem;
+    width: 1.5rem;
+    align-items: center;
+}
+@media(width<400px){
+    .lecture-subject{
+        font-size: 1.3rem;
+    }
+    .lecture-card-container{
+        height: 7rem;
+    }
+}
