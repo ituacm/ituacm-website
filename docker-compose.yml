@@ -2,23 +2,19 @@ services:
   app:
     image: ituacm-website:latest
     labels:
-      - traefik.enable=true
-      - traefik.docker.network=traefik-public
+      - traefik.docker.network: traefik-public
+      - traefik.enable: "true"
 
-      # SERVICE (container iç portun kaç ise: 80/3000/5173)
-      - traefik.http.services.website-app.loadbalancer.server.port=80
+      - traefik.http.services.website-app.loadbalancer.server.port: "80"
 
-      # HTTP -> HTTPS redirect
-      - traefik.http.routers.website-app-http.rule=Host(`ituacm.com`) || Host(`www.ituacm.com`)
-      - traefik.http.routers.website-app-http.entrypoints=http
-      - traefik.http.routers.website-app-http.middlewares=https-redirect
+      - traefik.http.routers.website-app-http.entrypoints: http
+      - traefik.http.routers.website-app-http.middlewares: https-redirect
+      - traefik.http.routers.website-app-http.rule: "Host(`ituacm.com`) || Host(`www.ituacm.com`)"
 
-      # HTTPS router (asıl trafik)
-      - traefik.http.routers.website-app-https.rule=Host(`ituacm.com`) || Host(`www.ituacm.com`)
-      - traefik.http.routers.website-app-https.entrypoints=https
-      - traefik.http.routers.website-app-https.tls=true
-      - traefik.http.routers.website-app-https.tls.certresolver=le
-
+      - traefik.http.routers.website-app-https.entrypoints: https
+      - traefik.http.routers.website-app-https.rule: "Host(`ituacm.com`) || Host(`www.ituacm.com`)"
+      - traefik.http.routers.website-app-https.tls: "true"
+      - traefik.http.routers.website-app-https.tls.certresolver: le
     networks:
       - traefik-public
       - default
