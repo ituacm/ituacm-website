@@ -1,26 +1,33 @@
 services:
   app:
+    # YALNIZCA BİRİNİ kullan:
     image: ituacm-website:latest
+    # build:
+    #   context: .
+    #   platform: linux/amd64  # M1/ARM için gerekiyorsa
+
+    expose:
+      - "80" # container içi port (Nginx ise 80)
+
     labels:
-      - traefik.docker.network: traefik-public
-      - traefik.enable: "true"
+      traefik.enable: "true"
+      traefik.docker.network: traefik-public
 
-      - traefik.http.services.website-app.loadbalancer.server.port: "80"
+      traefik.http.services.website-app.loadbalancer.server.port: "80"
 
-      - traefik.http.routers.website-app-http.entrypoints: http
-      - traefik.http.routers.website-app-http.middlewares: https-redirect
-      - traefik.http.routers.website-app-http.rule: "Host(`ituacm.com`) || Host(`www.ituacm.com`)"
+      traefik.http.routers.website-app-http.entrypoints: http
+      traefik.http.routers.website-app-http.middlewares: https-redirect
+      traefik.http.routers.website-app-http.rule: "Host(`ituacm.com`) || Host(`www.ituacm.com`)"
 
-      - traefik.http.routers.website-app-https.entrypoints: https
-      - traefik.http.routers.website-app-https.rule: "Host(`ituacm.com`) || Host(`www.ituacm.com`)"
-      - traefik.http.routers.website-app-https.tls: "true"
-      - traefik.http.routers.website-app-https.tls.certresolver: le
+      traefik.http.routers.website-app-https.entrypoints: https
+      traefik.http.routers.website-app-https.rule: "Host(`ituacm.com`) || Host(`www.ituacm.com`)"
+      traefik.http.routers.website-app-https.tls: "true"
+      traefik.http.routers.website-app-https.tls.certresolver: le
+
     networks:
       - traefik-public
       - default
-    build:
-      context: .
-    platform: linux/amd64 # Patch for M1 Mac
+    restart: always
 
 networks:
   traefik-public:
