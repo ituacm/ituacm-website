@@ -4,21 +4,21 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
-      - traefik.constraint-label=traefik-public
 
+      # SERVICE (container iç portun kaç ise: 80/3000/5173)
       - traefik.http.services.website-app.loadbalancer.server.port=80
 
-      - traefik.http.routers.website-app-http.rule=Host(`${DOMAIN?Variable not set}`) || Host(`www.${DOMAIN?Variable not set}`)
+      # HTTP -> HTTPS redirect
+      - traefik.http.routers.website-app-http.rule=Host(`ituacm.com`) || Host(`www.ituacm.com`)
       - traefik.http.routers.website-app-http.entrypoints=http
       - traefik.http.routers.website-app-http.middlewares=https-redirect
 
-      - traefik.http.routers.website-app-https.rule=Host(`${DOMAIN?Variable not set}`) || Host(`www.${DOMAIN?Variable not set}`)
+      # HTTPS router (asıl trafik)
+      - traefik.http.routers.website-app-https.rule=Host(`ituacm.com`) || Host(`www.ituacm.com`)
       - traefik.http.routers.website-app-https.entrypoints=https
       - traefik.http.routers.website-app-https.tls=true
       - traefik.http.routers.website-app-https.tls.certresolver=le
 
-      # Enable www redirection for HTTP and HTTPS
-      - traefik.http.routers.website-app-http.middlewares=https-redirect
     networks:
       - traefik-public
       - default
