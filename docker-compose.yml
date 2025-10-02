@@ -1,32 +1,26 @@
+version: "3.9"
+
 services:
   app:
-    image: ituacm-website:latest # veya build: .
+    image: ituacm-website:latest
+    # Eğer lokalden imaj inşa edeceksen:
     # build:
     #   context: .
-    expose:
-      - "80" # container İÇ portu; senin imajın 80'de 200 veriyor demiştin
-    labels:
-      traefik.enable: "true"
-      traefik.docker.network: traefik-public
+    #   dockerfile: Dockerfile
 
-      # Service (app iç portu)
-      traefik.http.services.website.loadbalancer.server.port: "80"
+    # Konteynerin iç portu 80 ise, host'ta 127.0.0.1:4000 üzerinden erişilir
+    ports:
+      - "127.0.0.1:4000:80"
 
-      # HTTP router (HTTPS'i sonra ekleriz)
-      traefik.http.routers.website-http.rule: "Host(`ituacm.com`) || Host(`www.ituacm.com`)"
-      traefik.http.routers.website-http.entrypoints: http
-      traefik.http.routers.website-http.middlewares: https-redirect # HTTP'yi HTTPS'e it
+    # İsteğe bağlı: konteyner sağlığını kontrol etmek için
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
 
-      # HTTPS router
-      traefik.http.routers.website-https.rule: "Host(`ituacm.com`) || Host(`www.ituacm.com`)"
-      traefik.http.routers.website-https.entrypoints: https
-      traefik.http.routers.website-https.tls: "true"
-      traefik.http.routers.website-https.tls.certresolver: le
+    # Kendi ihtiyacın varsa .env kullanabilirsin
+    # env_file:
+    #   - .env
 
-    networks:
-      - traefik-public
-    restart: always
-
-networks:
-  traefik-public:
-    external: true
+    restart: unless-stopped
