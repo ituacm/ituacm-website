@@ -3,6 +3,7 @@ import { AiFillInstagram, AiFillLinkedin } from "react-icons/ai";
 import { FaLink } from "react-icons/fa6";
 import { FaGithub } from "react-icons/fa";
 import "./BoardMember.css";
+import defaultpp from "../../assets/defaultpp.png";
 
 export default function BoardMember(props) {
   const { name, role, linkedin = null, email, photo, github } = props.member;
@@ -20,7 +21,7 @@ export default function BoardMember(props) {
 
   return (
     <div className="board-member">
-      <img src={photo} alt={"notfound"} />
+      <img src={photo? photo: defaultpp} alt={"notfound"} />
       <div className="board-member-info">
         <h1 className="board-member-name">{name}</h1>
         <h2 className="board-member-role">{role}</h2>
