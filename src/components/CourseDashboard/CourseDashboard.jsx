@@ -92,6 +92,45 @@ function CourseDashboard() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validate required fields
+    if (!courseRef.current.title?.trim()) {
+      alert("Title is required!");
+      return;
+    }
+    if (!courseRef.current.description?.trim()) {
+      alert("Description is required!");
+      return;
+    }
+    if (!courseRef.current.content?.trim()) {
+      alert("Content is required!");
+      return;
+    }
+
+    // Validate lecture fields if lectures exist
+    for (let i = 0; i < lectures.length; i++) {
+      const lecture = lectures[i];
+      if (!lecture.subject?.trim()) {
+        alert(`Lecture ${i + 1}: Subject is required!`);
+        return;
+      }
+      if (!lecture.location?.trim()) {
+        alert(`Lecture ${i + 1}: Location is required!`);
+        return;
+      }
+      if (!lecture.instructors?.trim()) {
+        alert(`Lecture ${i + 1}: Instructors is required!`);
+        return;
+      }
+      if (!lecture.start?.trim()) {
+        alert(`Lecture ${i + 1}: Start time is required!`);
+        return;
+      }
+      if (!lecture.end?.trim()) {
+        alert(`Lecture ${i + 1}: End time is required!`);
+        return;
+      }
+    }
+
     const { image, newImageFile, ...courseData } = courseRef.current;
     let imageUrl = image;
     let oldImageFileName;
