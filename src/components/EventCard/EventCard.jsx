@@ -90,10 +90,10 @@ function EventCard({ event, page }) {
             <FaRegClock className="eventcard-icon" />
             {event.start.getMinutes() % 10 == 0 ? (
               <p className="eventcard-detail-text">
-                {event.start.getHours() + ":" + "0" + event.start.getMinutes()}
+                {event.start.getHours() + ":" + (event.start.getMinutes() < 10 ? "0" + event.start.getMinutes() : event.start.getMinutes())}
               </p>
             ) : (
-              <p>{event.start.getHours() + ":" + event.start.getMinutes()}</p>
+              <p>{event.start.getHours() + ":" + (event.start.getMinutes() < 10 ? "0" + event.start.getMinutes() : event.start.getMinutes())}</p>
             )}
           </div>
           <div className="eventcard-detail-section">
