@@ -107,8 +107,7 @@ function CourseModal({ course }) {
                   <p>
                     {course.start.getHours() +
                       ":" +
-                      "0" +
-                      course.start.getMinutes()}
+                      (course.start.getMinutes() < 10 ? "0" + course.start.getMinutes() : course.start.getMinutes()) }
                   </p>
                 ) : (
                   <p>
