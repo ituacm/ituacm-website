@@ -97,13 +97,14 @@ function EventModal({ event }) {
                 <p>{event.location}</p>
               </div>
             </div>
-            <a
+            {event.registrationLink && (<a
               target="_blank"
               href={event.registrationLink}
               className="primary-button"
             >
               Join this event
-            </a>
+            </a>)}
+            
           </div>
         </div>
       </div>

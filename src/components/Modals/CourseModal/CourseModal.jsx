@@ -117,15 +117,15 @@ function CourseModal({ course }) {
                 )}
               </div>
             </div>
-            <div className="attend-course-button">
+            {course.registrationLink && (<div className="attend-course-button">
               <a
                 target="_blank"
-                href="https://docs.google.com/forms/d/1w4bAkhqatXXPSXyMjv_jzYFv9eZU2h0hLvLjhFA2yVc/viewform?edit_requested=true"
+                href= {course.registrationLink}
                 className="primary-button attend-course-link"
               >
                 Attend this course
               </a>
-            </div>
+            </div>)}
           </div>
         </div>
       </div>

@@ -44,6 +44,7 @@ function CourseDashboard() {
         description: "",
         content: "",
         image: "",
+        registrationLink: "",
       };
       setCourse(courseRef.current);
       setLectures([]);
@@ -212,6 +213,17 @@ function CourseDashboard() {
                 defaultValue={courseRef.current.content}
                 onChange={(e) => (courseRef.current.content = e.target.value)}
                 required
+              />
+            </label>
+
+            <label className="course-dashboard-form-label">
+              Registration Link:
+              <input
+                className="course-dashboard-form-input"
+                type="url"
+                placeholder="https://example.com/register"
+                defaultValue={courseRef.current.registrationLink || ""}
+                onChange={(e) => (courseRef.current.registrationLink = e.target.value)}
               />
             </label>
 
