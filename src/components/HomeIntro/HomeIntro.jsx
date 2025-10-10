@@ -22,8 +22,7 @@ function HomeIntro() {
           <Typewriter words={["elcome to ITU ACM!"]} loop={1} typeSpeed={100} />
         </h1>
         <p className="home-intro-text">
-          Your Place for Skill-Building Opportunities, Engaging Events, and
-          Thrilling Tech Experiences in Istanbul Technical University
+        We build projects, friendships, and memories. Coding the future together. Join the ITU ACM journey today!
         </p>
         <ul className="home-intro-button-group">
           <li>
