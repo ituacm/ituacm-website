@@ -21,7 +21,7 @@ function Stats() {
         <div className="stat">
           <PiBracketsCurlyBold className="stat-icon" />
 
-          <h2 className="stat-detail">2 Technical Squads</h2>
+          <h2 className="stat-detail">3 Technical Squads</h2>
         </div>
       </div>
     </div>
