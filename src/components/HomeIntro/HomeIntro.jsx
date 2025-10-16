@@ -28,7 +28,7 @@ function HomeIntro() {
           <li>
             <a
               target="_blank"
-              href="https://docs.google.com/forms/d/1w4bAkhqatXXPSXyMjv_jzYFv9eZU2h0hLvLjhFA2yVc/viewform?edit_requested=true"
+              href="https://docs.google.com/forms/d/e/1FAIpQLSchz4-bVg89tZi-q8UI0yKMsZzBRQbJQ33EEysUYZ8ZQGrSjA/viewform?usp=header"
             >
               <button
                 className="primary-button home-intro-join-us-button"
